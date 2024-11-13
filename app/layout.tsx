@@ -1,5 +1,5 @@
 // app/layout.tsx
-import Navbar from '@/components/Navbar';
+import Nav from '@/components/Nav';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Suspense } from 'react';
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-         <Navbar />
+         <Nav />
         {children}
       </body>
     </html>
