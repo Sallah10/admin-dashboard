@@ -2,6 +2,7 @@
 
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Avvvatars from "avvvatars-react";
+import Logo from "/components/My_logo.png";
 import { MenuIcon, ShieldCheckIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -36,7 +37,8 @@ export default function Navbar({user} : Props) {
             <div className="flex h-16 justify-between">
               <div className="flex">
                 <div className="text-blue-700 flex font-bold flex-shrink-0 items-center">
-                  <ShieldCheckIcon className="mr-2" />
+                  {/* <ShieldCheckIcon className="mr-2" /> */}
+                  <Image src={Logo} className="mr-2"  alt="logo"/>
                   <span>Admin</span>
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
