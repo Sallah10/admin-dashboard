@@ -2,9 +2,8 @@
 import { Card, Text, Title } from "@tremor/react";
 import Search from "@/components/Search";
 import UsersTable from "@/components/UsersTable";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 
-// ...
 type Props = {
   searchParams: {
     q?: string;
