@@ -6,7 +6,9 @@ A sleek, responsive admin dashboard built with modern web technologies for manag
 - 📊 Interactive charts & data visualization  
 - 📱 Fully responsive design  
 - 🛠️ User management & role-based access  
-- 🧩 Modular component structure  
+- 🧩 Modular component structure
+  
+![admin-dashboard](https://github.com/user-attachments/assets/32071316-8c81-4281-bcc1-651099d42e9b)
 
 ## Tech Stack  
 - **Frontend**: React, Tailwind CSS  
