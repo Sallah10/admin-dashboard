@@ -73,7 +73,7 @@ export default function Analytics() {
           </Card>
         ))}
       </Grid>
-      <Chart />
+      <Chart data={[]} />
     </main>
   );
 }

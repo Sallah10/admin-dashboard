@@ -21,7 +21,7 @@ function classNames(...classes: string[]) {
 }
 
 type Props = {
-  user: Session["user"];
+  user?: Session["user"];
 };
 
 export default function Navbar({ user }: Props) {

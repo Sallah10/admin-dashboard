@@ -1,9 +1,10 @@
 // app/actions/user.ts
 "use server";
 
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 import { revalidatePath } from "next/cache";
 
 export async function deleteUser(userId: string) {
