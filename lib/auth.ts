@@ -22,8 +22,8 @@ export const authOptions: AuthOptions = {
       }
       return session;
     },
-    async redirect() {
-      return "/";
+    async redirect({ baseUrl }) {
+      return baseUrl;
     },
   },
 };
