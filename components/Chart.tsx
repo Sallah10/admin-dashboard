@@ -3,37 +3,27 @@
 
 import { Card, AreaChart, Title, Text } from "@tremor/react";
 
-const data = [
-  {
-    Month: "Jan 21",
-    Sales: 2890,
-    Profit: 2400,
-  },
-  {
-    Month: "Feb 21",
-    Sales: 1890,
-    Profit: 1398,
-  },
-  {
-    Month: "Jan 22",
-    Sales: 3890,
-    Profit: 2980,
-  },
-];
+type ChartProps = {
+  data: {
+    month: string;
+    sales: number;
+    profit: number;
+  }[];
+};
 
-export default function Chart() {
+export default function Chart({ data }: ChartProps) {
   return (
     <Card className="mt-8">
-      <Title>Performance</Title>
-      <Text>Comparison between Sales and Profit</Text>
+      <Title>Revenue Performance</Title>
+      <Text>Comparison between Gross Sales and Net Profit</Text>
       <AreaChart
         className="mt-4 h-80"
         data={data}
-        categories={["Sales", "Profit"]}
-        index="Month"
+        categories={["sales", "profit"]}
+        index="month"
         colors={["indigo", "fuchsia"]}
         valueFormatter={(number: number) =>
-          `$ ${Intl.NumberFormat("us").format(number).toString()}`
+          `$${Intl.NumberFormat("us").format(number).toString()}`
         }
         yAxisWidth={60}
       />

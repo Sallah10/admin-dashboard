@@ -35,6 +35,12 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+// Update your User model
 model User {
   id            String    @id @default(cuid())
   createdAt     DateTime  @default(now())
@@ -43,6 +49,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  role          Role      @default(USER) // NEW FIELD
   accounts      Account[]
   sessions      Session[]
 }
@@ -53,4 +60,20 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model PageVisit {
+  id        String   @id @default(cuid())
+  category  String   // e.g., "Online Shop", "Website"
+  path      String   // e.g., "/red-sneaker-pro", "/home"
+  visits    Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model MonthlyRevenue {
+  id        String   @id @default(cuid())
+  month     String   // e.g., "Jan 24"
+  sales     Float
+  profit    Float
+  order     Int      // To keep months in chronological order (1, 2, 3...)
 }

@@ -1,14 +1,15 @@
+// components/Navbar.tsx
 "use client";
 
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Avvvatars from "avvvatars-react";
-import Logo from "/components/My_logo.png";
-import { MenuIcon, ShieldCheckIcon, XIcon } from "lucide-react";
+import { MenuIcon, ShieldCheckIcon, XIcon, GithubIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
+import { Session } from "next-auth";
 
 const navigation = [
   { name: "Users", href: "/" },
@@ -19,37 +20,34 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-import { Session } from "next-auth";
-
 type Props = {
   user: Session["user"];
 };
 
-
-export default function Navbar({user} : Props) {
+export default function Navbar({ user }: Props) {
   const pathname = usePathname();
 
   return (
-    <Disclosure as="nav" className="bg-white shadow-sm">
+    <Disclosure as="nav" className="bg-white shadow-sm border-b border-gray-200">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 justify-between">
+            <div className="flex h-16 justify-between items-center">
               <div className="flex">
-                <div className="text-blue-700 flex font-bold flex-shrink-0 items-center">
-                  <ShieldCheckIcon className="mr-2" />
-                  <span>Admin</span>
+                <div className="text-indigo-700 flex font-bold flex-shrink-0 items-center text-xl">
+                  <ShieldCheckIcon className="mr-2 h-6 w-6" />
+                  <span>AdMean</span>
                 </div>
-                <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+                <div className="hidden sm:-my-px sm:ml-8 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
                       className={classNames(
                         pathname === item.href
-                          ? "border-slate-500 text-gray-900"
-                          : "border-t ransparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                          ? "border-indigo-500 text-gray-900"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors"
                       )}
                       aria-current={pathname === item.href ? "page" : undefined}
                     >
@@ -58,41 +56,47 @@ export default function Navbar({user} : Props) {
                   ))}
                 </div>
               </div>
+
+              {/* Desktop Auth Section */}
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <Menu as="div" className="relative ml-3">
-                  <div>
-                  <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-                    <span className="sr-only">Open user menu</span>
-                    {user?.image ? (
-                      <Image
-                        className="h-8 w-8 rounded-full"
-                        src={user.image}
-                        height={32}
-                        width={32}
-                        alt={user?.name ?? 'avatar'}
-                      />
-                    ) : (
-                      <Avvvatars value={'U'} />
-                    )}
-                  </Menu.Button>
-                  </div>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {user ? (
+                {user ? (
+                  <Menu as="div" className="relative ml-3">
+                    <div>
+                      <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform hover:scale-105">
+                        <span className="sr-only">Open user menu</span>
+                        {user.image ? (
+                          <Image
+                            className="h-8 w-8 rounded-full border border-gray-200"
+                            src={user.image}
+                            height={32}
+                            width={32}
+                            alt={user.name ?? "avatar"}
+                          />
+                        ) : (
+                          <Avvvatars value={user.name || "Admin"} />
+                        )}
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="px-4 py-2 border-b border-gray-100 mb-1">
+                          <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                        </div>
                         <Menu.Item>
                           {({ active }) => (
                             <button
                               className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "flex w-full px-4 py-2 text-sm text-gray-700"
+                                active ? "bg-gray-50" : "",
+                                "flex w-full px-4 py-2 text-sm text-red-600 font-medium transition-colors"
                               )}
                               onClick={() => signOut()}
                             >
@@ -100,27 +104,24 @@ export default function Navbar({user} : Props) {
                             </button>
                           )}
                         </Menu.Item>
-                      ) : (
-                        <Menu.Item>
-                        {({ active }) => (
-                          <button
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "flex w-full px-4 py-2 text-sm text-gray-700"
-                            )}
-                            onClick={() => signIn("github")}
-                          >
-                            Sign in
-                          </button>
-                        )}
-                      </Menu.Item>
-                      )}
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                ) : (
+                  // NEW EXPLICIT SIGN IN BUTTON
+                  <button
+                    onClick={() => signIn("github")}
+                    className="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                  >
+                    <GithubIcon className="w-4 h-4 mr-2" />
+                    Sign in with GitHub
+                  </button>
+                )}
               </div>
+
+              {/* Mobile menu button */}
               <div className="-mr-2 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -132,6 +133,7 @@ export default function Navbar({user} : Props) {
             </div>
           </div>
 
+          {/* Mobile Menu Panel */}
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 pt-2 pb-3">
               {navigation.map((item) => (
@@ -141,7 +143,7 @@ export default function Navbar({user} : Props) {
                   href={item.href}
                   className={classNames(
                     pathname === item.href
-                      ? "bg-slate-50 border-slate-500 text-slate-700"
+                      ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                       : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
                     "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                   )}
@@ -152,31 +154,38 @@ export default function Navbar({user} : Props) {
               ))}
             </div>
             <div className="border-t border-gray-200 pt-4 pb-3">
-              {false ? (
+              {user ? (
                 <>
                   <div className="flex items-center px-4">
                     <div className="flex-shrink-0">
-                      <Avvvatars value={"U"} />
+                      {user.image ? (
+                        <Image className="h-10 w-10 rounded-full" src={user.image} height={40} width={40} alt="" />
+                      ) : (
+                        <Avvvatars value={user.name || "U"} />
+                      )}
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800">
-                        name
-                      </div>
-                      <div className="text-sm font-medium text-gray-500">
-                        email
-                      </div>
+                      <div className="text-base font-medium text-gray-800">{user.name}</div>
+                      <div className="text-sm font-medium text-gray-500">{user.email}</div>
                     </div>
                   </div>
                   <div className="mt-3 space-y-1">
-                    <button className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                    <button
+                      onClick={() => signOut()}
+                      className="block w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:bg-gray-100"
+                    >
                       Sign out
                     </button>
                   </div>
                 </>
               ) : (
-                <div className="mt-3 space-y-1">
-                  <button className="flex w-full px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
-                    Sign in
+                <div className="mt-3 space-y-1 px-4">
+                  <button
+                    onClick={() => signIn("github")}
+                    className="flex w-full items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-800"
+                  >
+                    <GithubIcon className="w-5 h-5 mr-2" />
+                    Sign in with GitHub
                   </button>
                 </div>
               )}

@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 
 

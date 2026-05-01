@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://admin-dashboard-zeta-one-45.vercel.app/sitemap.xml
