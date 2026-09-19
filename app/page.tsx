@@ -1,6 +1,7 @@
 // app/page.tsx
 import { Card, Text, Title } from "@tremor/react";
 import { Prisma } from "@prisma/client";
+import AddUserButton from "@/components/AddUserButton";
 import Search from "@/components/Search";
 import UsersTable from "@/components/UsersTable";
 import prisma from "@/lib/prisma";
@@ -24,7 +25,7 @@ export default async function Home({ searchParams }: Props) {
   if (!session) {
     return (
       <main className="p-4 md:p-10 mx-auto max-w-7xl flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="bg-white p-10 rounded-xl shadow-sm border border-gray-200 text-center">
+        <div className="bg-white dark:bg-gray-900 dark:border-gray-700 p-10 rounded-xl shadow-sm border border-gray-200 text-center">
           <Title className="text-2xl mb-2">Welcome to AdMean</Title>
           <Text>Please sign in with GitHub to view and manage users.</Text>
         </div>
@@ -62,14 +63,20 @@ export default async function Home({ searchParams }: Props) {
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>Users</Title>
-      <Text>A table of users retrieved from our database.</Text>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <Title>Users</Title>
+          <Text>A table of users retrieved from our database.</Text>
+        </div>
+        {session.user.role === "ADMIN" && <AddUserButton />}
+      </div>
       <Search query={searchParams.q} />
       <Card className="mt-6">
         {/* Pass the current user's role to the table */}
         <UsersTable
           users={users}
           currentUserRole={session.user.role}
+          viewerId={session.user.id}
           totalCount={totalCount}
           currentPage={currentPage}
           totalPages={totalPages}

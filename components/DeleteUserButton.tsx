@@ -44,7 +44,7 @@ export default function DeleteUserButton({ userId }: { userId: string }) {
                 <button
                     onClick={() => setIsConfirming(false)}
                     disabled={isPending}
-                    className="p-1.5 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-md transition-colors disabled:opacity-50"
+                    className="p-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors disabled:opacity-50"
                     title="Cancel"
                 >
                     <XIcon className="w-4 h-4" />

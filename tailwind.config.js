@@ -7,6 +7,7 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
     transparent: "transparent",
     extend: {
@@ -39,6 +40,36 @@ module.exports = {
             emphasis: "#374151", // gray-700
             strong: "#111827", // gray-900
             inverted: "#ffffff", // white
+          },
+        },
+        // dark mode
+        "dark-tremor": {
+          brand: {
+            faint: "#0b1229",
+            muted: "#172554",
+            subtle: "#1e40af",
+            DEFAULT: "#3b82f6",
+            emphasis: "#60a5fa",
+            inverted: "#030712",
+          },
+          background: {
+            muted: "#131a2b",
+            subtle: "#1f2937",
+            DEFAULT: "#111827",
+            emphasis: "#374151",
+          },
+          border: {
+            DEFAULT: "#1f2937",
+          },
+          ring: {
+            DEFAULT: "#1f2937",
+          },
+          content: {
+            subtle: "#4b5563",
+            DEFAULT: "#6b7280",
+            emphasis: "#e5e7eb",
+            strong: "#f9fafb",
+            inverted: "#030712",
           },
         },
       },

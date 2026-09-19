@@ -6,7 +6,6 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=flat-square&logo=prisma)](https://prisma.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A full-stack user-management dashboard: GitHub OAuth, role-based access control, database-backed search, pagination, and analytics — built with Next.js 14 Server Components + Server Actions.
 
@@ -19,17 +18,20 @@ A full-stack user-management dashboard: GitHub OAuth, role-based access control,
 ## What it does
 
 - **Sign in with GitHub** — NextAuth v4 wired to Prisma, so sessions and accounts live in Postgres.
-- **Role-based access control** — `ADMIN` / `USER` roles. The delete action is authorized **on the server** (Server Action), not just hidden in the UI, and an admin can't delete their own account.
+- **Full CRUD user management** — create (add user), read (list + search + paginate), update (promote/demote role), delete (two-step confirm). Every mutation is a Server Action authorized **on the server**, not just hidden in the UI.
+- **Role-based access control** — `ADMIN` / `USER` roles. Admins manage users; admin-only actions re-check `session.user.role` server-side, you can't delete **or** demote your own account, and a duplicate-email create is caught and surfaced as a friendly error.
 - **Search users** — debounced (300ms) and URL-driven (`?q=...`), matching **name OR email** with case-insensitive Postgres queries. The query string is shareable/bookmarkable.
 - **Paginate users** — offset-based pagination (`?page=...`), 8 per page, both params compose together.
 - **Analytics** — Tremor charts fed from `MonthlyRevenue` and `PageVisit` tables (seeded sample data), fetched in parallel with `Promise.all`.
+- **Dark mode** — class-based toggle with a no-flash inline script; dark is the first-load default and your choice is persisted. Tremor's dark tokens are wired in the Tailwind config.
+- **Polished routing UX** — loading skeleton (`loading.tsx`) and a styled error boundary (`error.tsx`) + 404.
 - **SEO basics** — metadata API, `sitemap.ts`, `robots.txt`.
 
 ## Honest scope notes
 
 This is a portfolio project, so a few things are intentionally simplified:
 
-- "CRUD" here means **R**ead (list + search) and **D**elete. There is no create- or edit-user UI yet.
+- **Update is role-only.** You can create a user, search/list them, and promote/demote — but there's no UI yet to edit a user's name or email after creation.
 - Analytics data is **seeded sample data**, not real traffic. Points like "high performance" are earned by bounded queries (pagination), not by claims of a load-tested system.
 - No test suite yet — the next milestone. Seed, lint, typecheck, and build scripts are all wired up.
 
@@ -98,16 +100,21 @@ npm run seed       # upsert demo users + analytics sample data
 
 ```
 app/
-├── layout.tsx                 # Root layout + metadata
+├── layout.tsx                 # Root layout + metadata + no-flash theme script
 ├── page.tsx                   # Users list: session guard, search, pagination
+├── loading.tsx / error.tsx    # Skeleton + error boundary
+├── not-found.tsx              # Styled 404
 ├── analytics/page.tsx         # Revenue + page-visit charts
-├── actions/user.ts            # Server Action: deleteUser (authz on the server)
+├── actions/user.ts            # Server Actions: create, update role, delete (authz on the server)
 └── api/auth/[...nextauth]/    # NextAuth handler
 components/
-├── Nav.tsx / Navbar.tsx       # Server + client nav, sign-in menu
+├── Nav.tsx / Navbar.tsx       # Server + client nav, sign-in menu, theme toggle
 ├── Search.tsx                 # Debounced search input (URL state)
-├── UsersTable.tsx             # Table + pagination footer
+├── UsersTable.tsx             # Table + pagination footer + role actions
+├── AddUserButton.tsx          # Create-user modal (Headless UI Dialog)
+├── PromoteUserButton.tsx      # Promote/demote row action
 ├── DeleteUserButton.tsx       # Confirm-then-delete UI
+├── ThemeToggle.tsx            # Dark/light switcher (localStorage + OS preference)
 └── Chart.tsx                  # Tremor AreaChart
 lib/
 ├── auth.ts                    # NextAuth options (GitHub provider, session callbacks)
@@ -119,20 +126,4 @@ prisma/
 types/next-auth.d.ts           # Session/User type augmentation (id + role)
 ```
 
-## Notes on decisions worth discussing
-
-- **Server components over client fetch loops.** Every list/chart is rendered on the server; search and delete mutate through Server Actions; pages revalidate on delete so the table reflects changes instantly.
-- **Authz lives in the Server Action.** Hiding a button is UX; checking `session.user.role` before the `prisma.user.delete` is security. The action also blocks self-deletion server-side.
-- **Search is one SQL `OR`.** `name` and `email` are matched with `mode: "insensitive"`, and pagination is clamped so `?page=99` never renders an empty page.
-- **Parallel analytics queries.** `Promise.all` on the two reads means wall-clock ~= slowest query, not the sum.
-
-## Roadmap (gladly discuss at interview)
-
-- Unit/integration tests (Vitest + Testing Library)
-- Create / edit / promote-user UI to complete true CRUD
-- Cursor-based pagination + full-text search at scale
-- Admin audit log for destructive actions
-
 ## License
-
-[MIT](./LICENSE) © 2026 Bello Muhammed

@@ -52,7 +52,7 @@ export default function Search({ query }: Props) {
           name="search"
           autoComplete="off"
           id="search"
-          className="h-10 block w-full rounded-md border border-gray-200 pl-9 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-colors"
+          className="h-10 block w-full rounded-md border border-gray-200 bg-white pl-9 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-colors dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
           placeholder="Search by name or email..."
           onChange={(event) => handleSearch(event.target.value)}
           defaultValue={query}
@@ -64,11 +64,11 @@ export default function Search({ query }: Props) {
           {query && (
             <button
               onClick={handleReset}
-              className="p-1 hover:bg-gray-100 rounded transition-colors"
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
               title="Clear search"
               disabled={isPending}
             >
-              <XIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+              <XIcon className="h-4 w-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" />
             </button>
           )}
         </div>

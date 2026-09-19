@@ -10,6 +10,7 @@ import { Fragment } from "react";
 import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { Session } from "next-auth";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const navigation = [
   { name: "Users", href: "/" },
@@ -28,13 +29,13 @@ export default function Navbar({ user }: Props) {
   const pathname = usePathname();
 
   return (
-    <Disclosure as="nav" className="bg-white shadow-sm border-b border-gray-200">
+    <Disclosure as="nav" className="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-900 dark:border-gray-800">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between items-center">
               <div className="flex">
-                <div className="text-indigo-700 flex font-bold flex-shrink-0 items-center text-xl">
+                <div className="text-indigo-700 dark:text-indigo-400 flex font-bold flex-shrink-0 items-center text-xl">
                   <ShieldCheckIcon className="mr-2 h-6 w-6" />
                   <span>AdMean</span>
                 </div>
@@ -45,8 +46,8 @@ export default function Navbar({ user }: Props) {
                       href={item.href}
                       className={classNames(
                         pathname === item.href
-                          ? "border-indigo-500 text-gray-900"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                          ? "border-indigo-500 text-gray-900 dark:text-gray-100"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-700",
                         "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors"
                       )}
                       aria-current={pathname === item.href ? "page" : undefined}
@@ -58,11 +59,12 @@ export default function Navbar({ user }: Props) {
               </div>
 
               {/* Desktop Auth Section */}
-              <div className="hidden sm:ml-6 sm:flex sm:items-center">
+              <div className="hidden sm:ml-6 sm:flex sm:items-center sm:gap-1">
+                <ThemeToggle />
                 {user ? (
                   <Menu as="div" className="relative ml-3">
                     <div>
-                      <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform hover:scale-105">
+                      <Menu.Button className="flex rounded-full bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform hover:scale-105">
                         <span className="sr-only">Open user menu</span>
                         {user.image ? (
                           <Image
@@ -86,16 +88,16 @@ export default function Navbar({ user }: Props) {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="px-4 py-2 border-b border-gray-100 mb-1">
-                          <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800 dark:ring-white/10 focus:outline-none">
+                        <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700 mb-1">
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{user.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
                         </div>
                         <Menu.Item>
                           {({ active }) => (
                             <button
                               className={classNames(
-                                active ? "bg-gray-50" : "",
+                                active ? "bg-gray-50 dark:bg-gray-700" : "",
                                 "flex w-full px-4 py-2 text-sm text-red-600 font-medium transition-colors"
                               )}
                               onClick={() => signOut()}
@@ -121,7 +123,7 @@ export default function Navbar({ user }: Props) {
 
               {/* Mobile menu button */}
               <div className="-mr-2 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-900 p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:hover:bg-gray-800 dark:hover:text-gray-300">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -143,8 +145,8 @@ export default function Navbar({ user }: Props) {
                   href={item.href}
                   className={classNames(
                     pathname === item.href
-                      ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                      : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
+                      ? "bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300"
+                      : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:border-gray-700 dark:hover:text-gray-200",
                     "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                   )}
                   aria-current={pathname === item.href ? "page" : undefined}
@@ -153,7 +155,10 @@ export default function Navbar({ user }: Props) {
                 </Disclosure.Button>
               ))}
             </div>
-            <div className="border-t border-gray-200 pt-4 pb-3">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 pb-3">
+              <div className="flex items-center justify-end px-4 mb-3">
+                <ThemeToggle />
+              </div>
               {user ? (
                 <>
                   <div className="flex items-center px-4">
@@ -165,14 +170,14 @@ export default function Navbar({ user }: Props) {
                       )}
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800">{user.name}</div>
-                      <div className="text-sm font-medium text-gray-500">{user.email}</div>
+                      <div className="text-base font-medium text-gray-800 dark:text-gray-100">{user.name}</div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{user.email}</div>
                     </div>
                   </div>
                   <div className="mt-3 space-y-1">
                     <button
                       onClick={() => signOut()}
-                      className="block w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:bg-gray-100"
+                      className="block w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
                       Sign out
                     </button>

@@ -62,8 +62,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("admean-theme");var d=t?t==="dark":true;if(d)document.documentElement.classList.add("dark");}catch(e){}`,
+          }}
+        />
         <Nav />
         {children}
       </body>

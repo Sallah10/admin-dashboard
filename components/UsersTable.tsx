@@ -12,10 +12,12 @@ import {
   Text,
 } from "@tremor/react";
 import DeleteUserButton from "./DeleteUserButton";
+import PromoteUserButton from "./PromoteUserButton";
 
 type Props = {
   users: User[];
   currentUserRole?: Role;
+  viewerId?: string;
   totalCount: number;
   currentPage: number;
   totalPages: number;
@@ -39,6 +41,7 @@ function pageHref(page: number, query: string) {
 export default function UsersTable({
   users,
   currentUserRole,
+  viewerId,
   totalCount,
   currentPage,
   totalPages,
@@ -55,7 +58,7 @@ export default function UsersTable({
   if (users.length === 0) {
     return (
       <div className="text-center py-8">
-        <Text className="text-gray-500">No users found</Text>
+        <Text className="text-gray-500 dark:text-gray-400">No users found</Text>
       </div>
     );
   }
@@ -75,19 +78,22 @@ export default function UsersTable({
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.id}>
-              <TableCell className="font-medium text-gray-900">{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
+              <TableCell className="font-medium text-gray-900 dark:text-gray-100">{user.name}</TableCell>
+              <TableCell className="text-gray-600 dark:text-gray-300">{user.email}</TableCell>
               <TableCell>
                 <Badge color={roleBadgeColor[user.role]}>{user.role}</Badge>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-gray-600 dark:text-gray-300">
                 {new Intl.DateTimeFormat("en-US", {
                   dateStyle: "medium"
                 }).format(user.createdAt)}
               </TableCell>
               {isAdmin && (
                 <TableCell className="text-right">
-                  <DeleteUserButton userId={user.id} />
+                  <div className="flex items-center justify-end gap-1">
+                    {user.id !== viewerId && <PromoteUserButton userId={user.id} role={user.role} />}
+                    <DeleteUserButton userId={user.id} />
+                  </div>
                 </TableCell>
               )}
             </TableRow>
@@ -97,7 +103,7 @@ export default function UsersTable({
 
       {totalCount > pageSize && (
         <div className="flex items-center justify-between mt-4 px-1">
-          <Text className="text-gray-500">
+          <Text className="text-gray-500 dark:text-gray-400">
             Showing {from}–{to} of {totalCount}
           </Text>
           <div className="flex items-center gap-2">
@@ -106,13 +112,13 @@ export default function UsersTable({
               aria-disabled={!prevHref}
               className={
                 prevHref
-                  ? "inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                  : "pointer-events-none inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-300"
+                  ? "inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                  : "pointer-events-none inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-300 dark:border-gray-800 dark:text-gray-600"
               }
             >
               Previous
             </Link>
-            <Text className="text-gray-500">
+            <Text className="text-gray-500 dark:text-gray-400">
               Page {currentPage} of {totalPages}
             </Text>
             <Link
@@ -120,8 +126,8 @@ export default function UsersTable({
               aria-disabled={!nextHref}
               className={
                 nextHref
-                  ? "inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                  : "pointer-events-none inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-300"
+                  ? "inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                  : "pointer-events-none inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-300 dark:border-gray-800 dark:text-gray-600"
               }
             >
               Next
