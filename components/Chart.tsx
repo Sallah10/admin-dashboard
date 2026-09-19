@@ -23,7 +23,7 @@ export default function Chart({ data }: ChartProps) {
         index="month"
         colors={["indigo", "fuchsia"]}
         valueFormatter={(number: number) =>
-          `$${Intl.NumberFormat("us").format(number).toString()}`
+          `$${Intl.NumberFormat("en-US").format(number).toString()}`
         }
         yAxisWidth={60}
       />

@@ -29,6 +29,9 @@ yarn-error.log*
 .env*.local
 .env
 
+# interview-prep notes (keep out of the public repo)
+PROJECT_EXPLAINER.md
+
 # vercel
 .vercel
 

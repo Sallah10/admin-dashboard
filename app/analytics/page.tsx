@@ -75,7 +75,7 @@ export default async function AnalyticsPage() {
             <BarList
               data={item.data}
               valueFormatter={(number: number) =>
-                Intl.NumberFormat("us").format(number).toString()
+                Intl.NumberFormat("en-US").format(number).toString()
               }
               className="mt-2"
             />

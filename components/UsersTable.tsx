@@ -1,5 +1,6 @@
 // components/UsersTable.tsx
-import { User } from "@prisma/client";
+import Link from "next/link";
+import { Role, User } from "@prisma/client";
 import {
   Table,
   TableBody,
@@ -14,11 +15,41 @@ import DeleteUserButton from "./DeleteUserButton";
 
 type Props = {
   users: User[];
-  currentUserRole?: string; // NEW PROP
+  currentUserRole?: Role;
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  query: string;
 };
 
-export default function UsersTable({ users, currentUserRole }: Props) {
+const roleBadgeColor: Record<Role, "indigo" | "slate"> = {
+  ADMIN: "indigo",
+  USER: "slate",
+};
+
+function pageHref(page: number, query: string) {
+  const params = new URLSearchParams();
+  if (query) params.set("q", query);
+  if (page > 1) params.set("page", String(page));
+  const qs = params.toString();
+  return qs ? `/?${qs}` : "/";
+}
+
+export default function UsersTable({
+  users,
+  currentUserRole,
+  totalCount,
+  currentPage,
+  totalPages,
+  pageSize,
+  query,
+}: Props) {
   const isAdmin = currentUserRole === "ADMIN";
+  const prevHref = currentPage > 1 ? pageHref(currentPage - 1, query) : undefined;
+  const nextHref = currentPage < totalPages ? pageHref(currentPage + 1, query) : undefined;
+  const from = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const to = Math.min(currentPage * pageSize, totalCount);
 
   // Show "no users found" message if the array is empty
   if (users.length === 0) {
@@ -30,41 +61,74 @@ export default function UsersTable({ users, currentUserRole }: Props) {
   }
 
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableHeaderCell>Name</TableHeaderCell>
-          <TableHeaderCell>Email</TableHeaderCell>
-          <TableHeaderCell>Role</TableHeaderCell>
-          <TableHeaderCell>Created At</TableHeaderCell>
-          {isAdmin && <TableHeaderCell className="text-right">Actions</TableHeaderCell>}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell className="font-medium text-gray-900">{user.name}</TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>
-              {/* @ts-ignore */}
-              <Badge color={user.role === "ADMIN" ? "indigo" : "slate"}>
-                {/* @ts-ignore */}
-                {user.role}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              {new Intl.DateTimeFormat("en-US", {
-                dateStyle: "medium"
-              }).format(user.createdAt)}
-            </TableCell>
-            {isAdmin && (
-              <TableCell className="text-right">
-                <DeleteUserButton userId={user.id} />
-              </TableCell>
-            )}
+    <>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell>Name</TableHeaderCell>
+            <TableHeaderCell>Email</TableHeaderCell>
+            <TableHeaderCell>Role</TableHeaderCell>
+            <TableHeaderCell>Created At</TableHeaderCell>
+            {isAdmin && <TableHeaderCell className="text-right">Actions</TableHeaderCell>}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {users.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell className="font-medium text-gray-900">{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>
+                <Badge color={roleBadgeColor[user.role]}>{user.role}</Badge>
+              </TableCell>
+              <TableCell>
+                {new Intl.DateTimeFormat("en-US", {
+                  dateStyle: "medium"
+                }).format(user.createdAt)}
+              </TableCell>
+              {isAdmin && (
+                <TableCell className="text-right">
+                  <DeleteUserButton userId={user.id} />
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {totalCount > pageSize && (
+        <div className="flex items-center justify-between mt-4 px-1">
+          <Text className="text-gray-500">
+            Showing {from}–{to} of {totalCount}
+          </Text>
+          <div className="flex items-center gap-2">
+            <Link
+              href={prevHref ?? "/"}
+              aria-disabled={!prevHref}
+              className={
+                prevHref
+                  ? "inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  : "pointer-events-none inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-300"
+              }
+            >
+              Previous
+            </Link>
+            <Text className="text-gray-500">
+              Page {currentPage} of {totalPages}
+            </Text>
+            <Link
+              href={nextHref ?? "/"}
+              aria-disabled={!nextHref}
+              className={
+                nextHref
+                  ? "inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  : "pointer-events-none inline-flex items-center rounded-md border border-gray-200 px-3 py-1 text-sm font-medium text-gray-300"
+              }
+            >
+              Next
+            </Link>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,5 +1,6 @@
 // app/page.tsx
 import { Card, Text, Title } from "@tremor/react";
+import { Prisma } from "@prisma/client";
 import Search from "@/components/Search";
 import UsersTable from "@/components/UsersTable";
 import prisma from "@/lib/prisma";
@@ -7,9 +8,12 @@ import { getServerSession } from "next-auth";
 // import { authOptions } from "./api/auth/[...nextauth]/route";
 import { authOptions } from "@/lib/auth";
 
+const PAGE_SIZE = 8;
+
 type Props = {
   searchParams: {
     q?: string;
+    page?: string;
   };
 };
 
@@ -28,21 +32,32 @@ export default async function Home({ searchParams }: Props) {
     );
   }
 
-  const query = searchParams.q;
+  const query = searchParams.q?.trim() ?? "";
+  const requestedPage = Math.max(1, Number(searchParams.page) || 1);
+
+  // 2. BUILD FILTER: "name OR email" so a partial match on either field shows up
+  const where: Prisma.UserWhereInput = query
+    ? {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
+      }
+    : {};
+
+  // 3. Count first so the requested page never exceeds the last page
+  const totalCount = await prisma.user.count({ where });
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const currentPage = Math.min(requestedPage, totalPages);
+
+  // 4. Fetch only the current page of results
   const users = await prisma.user.findMany({
-    where: {
-      name: {
-        contains: query,
-        mode: "insensitive",
-      },
-      email: {
-        contains: query,
-        mode: "insensitive",
-      },
-    },
+    where,
     orderBy: {
-      createdAt: 'desc'
-    }
+      createdAt: "desc",
+    },
+    skip: (currentPage - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
   });
 
   return (
@@ -52,8 +67,15 @@ export default async function Home({ searchParams }: Props) {
       <Search query={searchParams.q} />
       <Card className="mt-6">
         {/* Pass the current user's role to the table */}
-        {/* @ts-ignore */}
-        <UsersTable users={users} currentUserRole={session.user.role} />
+        <UsersTable
+          users={users}
+          currentUserRole={session.user.role}
+          totalCount={totalCount}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={PAGE_SIZE}
+          query={query}
+        />
       </Card>
     </main>
   );
